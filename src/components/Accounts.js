@@ -2,25 +2,43 @@ import React, { createContext } from 'react'
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
 import Pool from '../services/UserPool'
 
-const AccountContext = createContext()
+const AccountContext = createContext();
 
 function Account (props) {
-    const getSession = async() => {
-        await new Promise((resolve, reject) => {
-            const user = Pool.getCurrentUser()
-            if (user) {
-                user.getSession((err, session) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(session)
-                    }
-                })
-            } else {
-                reject('No user found')
-            }
-        });
-    }
+  const getSession = async () =>
+    await new Promise((resolve, reject) => {
+      // get the current user in the pool
+      const user = Pool.getCurrentUser()
+      if (user) {
+        // get user session info
+        user.getSession(async (err, session) => {
+          if (err) {
+            reject(err)
+          } else {
+            // get user attributes
+            const attributes = await new Promise((resolve, reject) => {
+              user.getUserAttributes((err, attributes) => {
+                if (err) {
+                  reject(err)
+                } else {
+                  const results = {}
+                  attributes.forEach(attribute => {
+                    let { Name, Value } = attribute
+                    results[Name] = Value
+                  })
+                  resolve(results)
+                }
+              })
+            })
+            // resolve both user session and attributes
+            resolve({ user, ...session, ...attributes })
+          }
+        })
+      } else {
+        reject('No user found')
+      }
+    })
+
   const authenticate = async (Username, Password) => {
     await new Promise((resolve, reject) => {
       const user = new CognitoUser({ Username, Pool })
@@ -32,32 +50,33 @@ function Account (props) {
 
       user.authenticateUser(authDetails, {
         onSuccess: data => {
-          console.log('onSuccess', data);
-          resolve(data);
+          console.log('onSuccess', data)
+          resolve(data)
         },
         onFailure: err => {
           console.log('onFailure', err)
-          reject(err);
+          reject(err)
         },
         newPasswordRequired: data => {
           console.log('newPasswordRequired', data)
-          resolve(data);
+          resolve(data)
         }
       })
     })
   }
 
   const logout = () => {
-      const user = Pool.getCurrentUser();
-      if (user) {
-          user.signOut();
-      }
-  };
+    const user = Pool.getCurrentUser()
+    if (user) {
+      user.signOut()
+    }
+  }
 
   return (
-    <AccountContext.Provider value={{authenticate, getSession, logout}}>
-        {props.children}
-    </AccountContext.Provider>)
+    <AccountContext.Provider value={{ authenticate, getSession, logout }}>
+      {props.children}
+    </AccountContext.Provider>
+  )
 }
 
 export { AccountContext, Account }
