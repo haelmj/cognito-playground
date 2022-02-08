@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import Login from './components/Login';
-import Signup from './components/Signup';
 import  {Account} from './components/Accounts';
 import Status from './components/Status';
+import Settings from './components/Settings';
 
 export default () => {
   return (
@@ -10,6 +10,7 @@ export default () => {
       <Status>
         <Login />
       </Status>
+      <Settings/>
     </Account>
   )
 }
