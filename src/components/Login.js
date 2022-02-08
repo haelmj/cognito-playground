@@ -23,7 +23,7 @@ export default () => {
     <div>
       <form onSubmit={onSubmit}>
         <input value={email} onChange={e => setEmail(e.target.value)} />
-        <input value={password} onChange={e => setPassword(e.target.value)} />
+        <input value={password} onChange={e => setPassword(e.target.value)} type='password'/>
         <button type='submit'>Login</button>
       </form>
     </div>
