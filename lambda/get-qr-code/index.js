@@ -1,7 +1,8 @@
 const AWS = require('aws-sdk');
 const QR = require('qrcode');
+require('dotenv').config();
 
-const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'region'});
+const cognito = new AWS.CognitoIdentityServiceProvider({ region: process.env.REGION});
 
 const getQRCode = async (AccessToken) => await new Promise((resolve, reject) => {
     cognito.associateSoftwareToken({
@@ -15,12 +16,12 @@ const getQRCode = async (AccessToken) => await new Promise((resolve, reject) => 
             const uri = `otpauth://totp/${decodeURI(name)}?secret=${data.SecretCode}&issuer=${name}`;
             console.log(uri)
 
-            QR.toDataURL(uri, (err, url) => {
+            QR.toDataURL(uri, (err, result) => {
                 if (err) {
                     console.log('Error:', err);
                     reject(err);
                 } else {
-                    resolve(url);
+                    resolve(result);
                 }
             })
         }
