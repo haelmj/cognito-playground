@@ -2,7 +2,7 @@ import React, { createContext } from 'react'
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
 import Pool from '../services/UserPool'
 
-const AccountContext = createContext();
+const AccountContext = createContext()
 
 function Account (props) {
   const getSession = async () =>
@@ -30,8 +30,17 @@ function Account (props) {
                 }
               })
             })
+
+            const token = session.getIdToken().getJwtToken()
             // resolve both user session and attributes
-            resolve({ user, ...session, ...attributes })
+            resolve({
+              user,
+              headers: { 
+                'x-api-key': attributes['api_key'],
+                Authorization: token },
+              ...session,
+              ...attributes
+            })
           }
         })
       } else {
