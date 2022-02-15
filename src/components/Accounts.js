@@ -30,11 +30,13 @@ function Account (props) {
                 }
               })
             })
+            const accessToken = session.accessToken.getJwtToken
 
             const token = session.getIdToken().getJwtToken()
             // resolve both user session and attributes
             resolve({
               user,
+              accessToken,
               headers: { 
                 'x-api-key': attributes['api_key'],
                 Authorization: token },
