@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { AccountContext } from './Accounts'
 
-export default () => {
+const ChangePassword = () => {
   const [password, setPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -47,21 +47,25 @@ export default () => {
           onChange={e => setPassword(e.target.value)}
           type='password'
           placeholder='Current Password'
+          required
         />
         <input
           value={newPassword}
           onChange={e => setNewPassword(e.target.value)}
           type='password'
           placeholder='New Password'
+          required
         />
         <input
           value={confirmPassword}
           onChange={e => setConfirmPassword(e.target.value)}
           type='password'
           placeholder='Confirm Password'
+          required
         />
         <button type='submit'>Change Password</button>
       </form>
     </div>
   )
 }
+export default ChangePassword

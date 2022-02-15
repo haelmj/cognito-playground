@@ -1,5 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { AccountContext } from './Accounts'
+import React from 'react'
 import ChangePassword from './ChangePassword'
 import Header from './Header'
 
