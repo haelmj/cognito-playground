@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react'
+import {Link} from 'react-router-dom'
 import { AccountContext } from './Accounts'
 
-export default () => {
+const Login = ({setStatus}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -13,6 +14,7 @@ export default () => {
     authenticate(email, password)
       .then(data => {
         console.log('Logged in: ', data)
+        setStatus(true);
       })
       .catch(err => {
         console.log('Oops ran into an error: ', err)
@@ -22,10 +24,12 @@ export default () => {
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <input value={email} onChange={e => setEmail(e.target.value)} />
-        <input value={password} onChange={e => setPassword(e.target.value)} type='password'/>
-        <button type='submit'>Login</button>
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder='Email' required/>
+        <input value={password} onChange={e => setPassword(e.target.value)} type='password' placeholder='Password' required/>
+        <button type='submit'>Login</button><br/>
       </form>
+      <Link to='/forgot-password'>Forgot Password?</Link>
     </div>
   )
 }
+export default Login;
