@@ -1,31 +1,17 @@
-import React, {useState} from 'react';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import Login from './components/Login';
-import  {Account} from './components/Accounts';
+import React, { useState } from 'react';
+import { Account } from './components/Accounts';
 import Status from './components/Status';
-import Settings from './components/Settings';
-import ForgotPassword from './components/ForgotPassword';
 
-export default () => {
-  const [status, setStatus] = useState(false);
+/*
+* Load Account Component for access to context and pass in Status as the child component
+ */
+const App = () => {
+  const [status, setStatus] = useState(false)
   return (
     <Account>
-      <Status status={status} setStatus={setStatus}>
-        <BrowserRouter>
-        <Routes>
-          <Route exact path='/' element={
-            <>
-            <Login setStatus={setStatus}/>
-            </>
-          }/>
-          <Route path='/forgot-password' element={
-            <ForgotPassword/>
-          }/>
-          </Routes>
-        </BrowserRouter>
-      </Status>
-      
+      <Status status={status} setStatus={setStatus} />
     </Account>
   )
 }
-// add settings component
+
+export default App
