@@ -7,6 +7,19 @@ const MFA = () => {
   const [image, setImage] = useState('')
   const { getSession } = useContext(AccountContext)
 
+
+  useEffect(() => {
+    getSession().then(({mfaEnabled})=>{
+      setEnabled(mfaEnabled)
+    })
+  })
+
+
+  /**
+   * @function getQRCode
+   * @description Get the QR code for the user's MFA and update the image state
+   * @returns {void}
+   */
   const getQRCode = () => {
     getSession().then(({ accessToken, headers }) => {
       if (typeof accessToken !== 'string') {
@@ -20,6 +33,12 @@ const MFA = () => {
         .catch(console.error)
     })
   }
+
+  /**
+   * @function enableMFA
+   * @description Send the user's code and access token to the cognito server to enable MFA; Update the user's MFA settings
+   * @returns {void} 
+   */
   const enableMFA = (event) => {
     event.preventDefault();
 
@@ -51,7 +70,7 @@ const MFA = () => {
         })
         .catch(console.error)
   })}
-  const disableMFA = () => {}
+  
   return (
     <>
       <div>Multi-factor Authentication</div>
