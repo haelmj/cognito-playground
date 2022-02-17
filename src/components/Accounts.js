@@ -1,7 +1,11 @@
 import React, { createContext } from 'react'
+import AWS from 'aws-sdk'
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
 import Pool from '../services/UserPool'
 
+const cognito = new AWS.CognitoIdentityServiceProvider({
+  region: process.env.REACT_APP_REGION
+})
 const AccountContext = createContext()
 
 function Account (props) {
@@ -30,16 +34,37 @@ function Account (props) {
                 }
               })
             })
-            const accessToken = session.accessToken.getJwtToken
+
+            const accessToken = session.accessToken.jwtToken
+
+            const mfaEnabled = await new Promise((resolve, reject) => {
+              cognito.getUser(
+                {
+                  AccessToken: accessToken
+                },
+                (err, data) => {
+                  if (err) {
+                    reject(err)
+                  } else {
+                    resolve(
+                      data.UserMFASettingLis &&
+                        data.UserMFASettingList.includes('SOFTWARE_TOKEN_MFA')
+                    )
+                  }
+                }
+              )
+            })
 
             const token = session.getIdToken().getJwtToken()
             // resolve both user session and attributes
             resolve({
               user,
               accessToken,
-              headers: { 
-                'x-api-key': attributes['api_key'],
-                Authorization: token },
+              mfaEnabled,
+              headers: {
+                'x-api-key': attributes['apiKey'],
+                Authorization: token
+              },
               ...session,
               ...attributes
             })
@@ -68,10 +93,7 @@ function Account (props) {
           console.log('onFailure', err)
           reject(err)
         },
-        newPasswordRequired: data => {
-          console.log('newPasswordRequired', data)
-          resolve(data)
-        }
+
       })
     })
   }
