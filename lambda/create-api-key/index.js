@@ -27,7 +27,7 @@ const addToPlan = async (keyId) => {
     return await new Promise((resolve, reject) => {
         const params = {
             keyId,
-            keyType: 'API_KEY',
+            keyType: 'API-KEY',
             usagePlanId: process.env.USAGE_PLAN_ID
         }
 
@@ -45,7 +45,7 @@ const saveApiKey = async (sub, apikey) => {
             Username: sub,
             UserAttributes: [
                 {
-                    Name: 'api_key',
+                    Name: 'custom:apiKey',
                     Value: apikey
                 }
             ]
@@ -63,9 +63,10 @@ const main = async( event ) => {
    
 
     if (event.triggerSource === 'PostConfirmation_ConfirmSignUp') {
-        const { value: apiKey }= await generateApiKey(event.sub);
+        const {sub} = event.request.userAttributes;
+        const { id, value: apiKey }= await generateApiKey(event.sub);
         await addToPlan(id);
-        await saveApiKey(event.sub, apiKey)
+        await saveApiKey(sub, apiKey)
     }
 
     return event;

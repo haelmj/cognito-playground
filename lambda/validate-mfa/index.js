@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 
-const cognito = new AWS.CognitoIdentityServiceProvider({ region: process.env.AWS_REGION });
+const cognito = new AWS.CognitoIdentityServiceProvider({ region: process.env.REGION });
 
 const validateMFA = async (userCode, AccessToken) => 
     await new Promise ((resolve, reject) => {
