@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AccountContext } from './Accounts'
 import Dashboard from './Dashboard'
@@ -11,8 +11,8 @@ import Login from './Login'
  * Verify if user is logged in and redirect to dashboard if so;
  * otherwise, redirect to login page.
  */
-const Status = props => {
-  const { status, setStatus } = props
+const Status = () => {
+  const [status, setStatus] = useState(false)
   const { getSession, logout } = useContext(AccountContext)
 
   /* Get the current user session
@@ -40,8 +40,8 @@ const Status = props => {
   return (
     <BrowserRouter>
         <Routes>
-        <Route exact path='/login' element={<Login setStatus={setStatus} />} />
-        <Route exact path='/forgot-password' element={<ForgotPassword />} />
+        <Route exact path='/login' element={!status? <Login setStatus={setStatus} /> : <Navigate to='/'/>} />
+        <Route exact path='/forgot-password' element={!status? <ForgotPassword /> : <Navigate to='/'/>} />
         <Route exact path='/' element={status ? <Dashboard handleLogOut={handleLogOut}/>: <Navigate to='/login'/>} />
         <Route exact path='/settings' element={status ? <Settings handleLogOut={handleLogOut} />: <Navigate to='/login'/>} />
         </Routes>
