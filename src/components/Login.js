@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import { AccountContext } from './Accounts'
 
-const Login = ({setStatus}) => {
+const Login = ({setStatus, setUser, setUserAttributes, setNewPasswordRequired}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const navigate = useNavigate()
 
   const { authenticate } = useContext(AccountContext)
 
@@ -12,9 +13,21 @@ const Login = ({setStatus}) => {
     e.preventDefault()
 
     authenticate(email, password)
-      .then(data => {
-        console.log('Logged in: ', data)
-        setStatus(true);
+      .then(({message, user, data}) => {
+        console.log('Logged in: ', {message, user, data})
+        switch(message) {
+          case 'SUCCESS':
+            setStatus(true)
+            break
+          case 'newPasswordRequired':
+            setNewPasswordRequired(true)
+            setUser(user)
+            setUserAttributes(data)
+            navigate('/change-password-required')
+            break
+          case 'mfaRequired':
+            break
+        }
       })
       .catch(err => {
         console.log('Oops ran into an error: ', err)

@@ -75,7 +75,7 @@ function Account (props) {
       }
     })
 
-  const authenticate = async (Username, Password) => {
+  const authenticate = async (Username, Password) => 
     await new Promise((resolve, reject) => {
       const user = new CognitoUser({ Username, Pool })
 
@@ -87,16 +87,28 @@ function Account (props) {
       user.authenticateUser(authDetails, {
         onSuccess: data => {
           console.log('onSuccess', data)
-          resolve(data)
+          resolve({message: 'SUCCESS', user, data})
         },
         onFailure: err => {
           console.log('onFailure', err)
           reject(err)
         },
-
+        newPasswordRequired: (userAttributes) => {
+          // drop unwanted field
+          delete userAttributes.email_verified;
+          console.log('newPasswordRequired', userAttributes)
+          resolve({message: 'newPasswordRequired', user, data: userAttributes})
+        },
+        mfaRequired: () => {
+          const token = prompt('Please enter the 6-digit code from your authenticator app')
+          user.sendMFACode(token, {
+            onSuccess: () => window.location.href = window.location.href,
+            onFailure: ()=> alert('Incorrect code')
+          }, 'SOFTWARE_TOKEN_MFA')
+        }
       })
     })
-  }
+  
 
   const logout = () => {
     const user = Pool.getCurrentUser()

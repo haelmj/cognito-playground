@@ -5,6 +5,7 @@ import Dashboard from './Dashboard'
 import Settings from './Settings'
 import ForgotPassword from './ForgotPassword'
 import Login from './Login'
+import ChangePassword from './ChangePassword'
 
 
 /**
@@ -14,7 +15,9 @@ import Login from './Login'
 const Status = () => {
   const [status, setStatus] = useState(false)
   const { getSession, logout } = useContext(AccountContext)
-
+  const [newPasswordRequired, setNewPasswordRequired] = useState(false)
+  const [user,setUser] = useState(null)
+  const [ userAttributes, setUserAttributes ] = useState(null)
   /* Get the current user session
    *  Update the status to true if user session is found
    */
@@ -40,10 +43,11 @@ const Status = () => {
   return (
     <BrowserRouter>
         <Routes>
-        <Route exact path='/login' element={!status? <Login setStatus={setStatus} /> : <Navigate to='/'/>} />
+        <Route exact path='/login' element={!status? <Login setStatus={setStatus} setUser={setUser} setUserAttributes={setUserAttributes} setNewPasswordRequired={setNewPasswordRequired} /> : <Navigate to='/'/>} />
         <Route exact path='/forgot-password' element={!status? <ForgotPassword /> : <Navigate to='/'/>} />
         <Route exact path='/' element={status ? <Dashboard handleLogOut={handleLogOut}/>: <Navigate to='/login'/>} />
         <Route exact path='/settings' element={status ? <Settings handleLogOut={handleLogOut} />: <Navigate to='/login'/>} />
+        <Route exact path='/change-password-required' element={newPasswordRequired ? <ChangePassword user={user} userAttributes={userAttributes} setNewPasswordRequired={setNewPasswordRequired}/>: <Navigate to='/login'/>} />
         </Routes>
     </BrowserRouter>
   )
