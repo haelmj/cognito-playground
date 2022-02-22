@@ -8,6 +8,15 @@ const cognito = new AWS.CognitoIdentityServiceProvider({
 })
 const AccountContext = createContext()
 
+const createApiKey = async (sub, token) => {
+  const response = await fetch(
+    `${process.env.REACT_APP_AUTHENTICATION_URI}/generate-key?sub=${sub}`,
+    { method: 'POST', headers: { Authorization: token } }
+  )
+
+  return response
+}
+
 function Account (props) {
   const getSession = async () =>
     await new Promise((resolve, reject) => {
@@ -34,7 +43,7 @@ function Account (props) {
                 }
               })
             })
-
+            console.log(attributes)
             const accessToken = session.accessToken.jwtToken
 
             const mfaEnabled = await new Promise((resolve, reject) => {
@@ -62,7 +71,7 @@ function Account (props) {
               accessToken,
               mfaEnabled,
               headers: {
-                'x-api-key': attributes['apiKey'],
+                'x-api-key': attributes['custom:apiKey'],
                 Authorization: token
               },
               ...session,
@@ -75,7 +84,7 @@ function Account (props) {
       }
     })
 
-  const authenticate = async (Username, Password) => 
+  const authenticate = async (Username, Password) =>
     await new Promise((resolve, reject) => {
       const user = new CognitoUser({ Username, Pool })
 
@@ -87,28 +96,38 @@ function Account (props) {
       user.authenticateUser(authDetails, {
         onSuccess: data => {
           console.log('onSuccess', data)
-          resolve({message: 'SUCCESS', user, data})
+          if (!data.idToken.payload['custom:apiKey']) {
+            createApiKey(
+              data.idToken.payload['cognito:username'],
+              data.idToken.jwtToken
+            ).then(resolve({ message: 'SUCCESS', user, data }))
+          }
         },
         onFailure: err => {
           console.log('onFailure', err)
           reject(err)
         },
-        newPasswordRequired: (userAttributes) => {
+        newPasswordRequired: data => {
           // drop unwanted field
-          delete userAttributes.email_verified;
-          console.log('newPasswordRequired', userAttributes)
-          resolve({message: 'newPasswordRequired', user, data: userAttributes})
+          delete data.email_verified
+          console.log('newPasswordRequired', data)
+          resolve({ message: 'newPasswordRequired', user, data })
         },
         mfaRequired: () => {
-          const token = prompt('Please enter the 6-digit code from your authenticator app')
-          user.sendMFACode(token, {
-            onSuccess: () => window.location.href = window.location.href,
-            onFailure: ()=> alert('Incorrect code')
-          }, 'SOFTWARE_TOKEN_MFA')
+          const token = prompt(
+            'Please enter the 6-digit code from your authenticator app'
+          )
+          user.sendMFACode(
+            token,
+            {
+              onSuccess: () => (window.location.href = window.location.href),
+              onFailure: () => alert('Incorrect code')
+            },
+            'SOFTWARE_TOKEN_MFA'
+          )
         }
       })
     })
-  
 
   const logout = () => {
     const user = Pool.getCurrentUser()
@@ -124,4 +143,4 @@ function Account (props) {
   )
 }
 
-export { AccountContext, Account }
+export { AccountContext, Account, createApiKey }

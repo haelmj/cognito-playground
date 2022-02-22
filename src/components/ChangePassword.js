@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { AccountContext } from './Accounts'
 import { useNavigate } from 'react-router-dom'
+import { createApiKey } from './Accounts'
 
 const ChangePassword = (props) => {
   const [password, setPassword] = useState('')
@@ -20,10 +21,16 @@ const ChangePassword = (props) => {
     userAttributes.name = name;
     user.completeNewPasswordChallenge(newPassword, userAttributes, {
       onFailure: err => console.log(err),
-      onSuccess: () => alert('Password changed successfully')
+      onSuccess: (session) => {
+        createApiKey(session.idToken.payload['cognito:username'], session.idToken.jwtToken).then(() => {
+          alert('Password Change Successful!')
+          setNewPasswordRequired(false);
+          navigate('/')
+        })
+
+      }
     });
-    setNewPasswordRequired(false);
-    navigate('/')
+
     
   }
 
