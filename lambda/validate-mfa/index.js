@@ -18,4 +18,4 @@ const main = async (event)=> {
     return validateMFA(event.userCode, event.accessToken);
 }
 
-exports.handle = main
+exports.handler = main
