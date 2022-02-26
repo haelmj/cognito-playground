@@ -1,12 +1,13 @@
 const AWS = require('aws-sdk');
+require('dotenv').config();
 
 const cognito = new AWS.CognitoIdentityServiceProvider({ region: process.env.REGION });
 
-const validateMFA = async (userCode, AccessToken) => 
+const validateMFA = async (UserCode, AccessToken) => 
     await new Promise ((resolve, reject) => {
         const params = {
             AccessToken,
-            userCode
+            UserCode
         }
     cognito.verifySoftwareToken(params, (err, result)=>{
         if (err) reject(err);
