@@ -47,21 +47,17 @@ function Account (props) {
             const accessToken = session.accessToken.jwtToken
 
             const mfaEnabled = await new Promise((resolve, reject) => {
-              cognito.getUser(
-                {
-                  AccessToken: accessToken
-                },
-                (err, data) => {
-                  if (err) {
-                    reject(err)
-                  } else {
-                    resolve(
-                      data.UserMFASettingLis &&
-                        data.UserMFASettingList.includes('SOFTWARE_TOKEN_MFA')
-                    )
-                  }
+              cognito.getUser({ AccessToken: accessToken }, (err, data) => {
+                if (err) {
+                  reject(err)
+                } else {
+                  resolve(
+                    data.UserMFASettingList
+                      ? data.UserMFASettingList.includes('SOFTWARE_TOKEN_MFA')
+                      : false
+                  )
                 }
-              )
+              })
             })
 
             const token = session.getIdToken().getJwtToken()
@@ -101,6 +97,8 @@ function Account (props) {
               data.idToken.payload['cognito:username'],
               data.idToken.jwtToken
             ).then(resolve({ message: 'SUCCESS', user, data }))
+          } else {
+            resolve({ message: 'SUCCESS', user, data })
           }
         },
         onFailure: err => {

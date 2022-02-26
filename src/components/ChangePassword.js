@@ -25,7 +25,7 @@ const ChangePassword = (props) => {
         createApiKey(session.idToken.payload['cognito:username'], session.idToken.jwtToken).then(() => {
           alert('Password Change Successful!')
           setNewPasswordRequired(false);
-          navigate('/')
+          navigate('/enable-mfa')
         })
 
       }

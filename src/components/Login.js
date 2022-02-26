@@ -18,6 +18,7 @@ const Login = ({setStatus, setUser, setUserAttributes, setNewPasswordRequired}) 
         switch(message) {
           case 'SUCCESS':
             setStatus(true)
+            navigate('/enable-mfa')
             break
           case 'newPasswordRequired':
             setNewPasswordRequired(true)

@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { AccountContext } from './Accounts'
+import { useNavigate } from 'react-router-dom'
 
-const MFA = () => {
+const MFA = ({enabled, setEnabled}) => {
   const [userCode, setUserCode] = useState('')
-  const [enabled, setEnabled] = useState(false)
+  
   const [image, setImage] = useState('')
   const { getSession } = useContext(AccountContext)
+  const navigate = useNavigate()
 
 
   useEffect(() => {
@@ -25,7 +27,7 @@ const MFA = () => {
       if (typeof accessToken !== 'string') {
         accessToken = accessToken.jwtToken
       }
-      const uri = `${process.env.AUTHENTICATION_URI}/mfa?accessToken=${accessToken}`
+      const uri = `${process.env.REACT_APP_AUTHENTICATION_URI}/mfa?accessToken=${accessToken}`
 
       fetch(uri, { headers })
         .then(data => data.json())
@@ -46,7 +48,7 @@ const MFA = () => {
       if (typeof accessToken !== 'string') {
         accessToken = accessToken.jwtToken
       }
-      const uri = `${process.env.AUTHENTICATION_URI}/mfa/enable?accessToken=${accessToken}&userCode=${userCode}`
+      const uri = `${process.env.REACT_APP_AUTHENTICATION_URI}/mfa?accessToken=${accessToken}&userCode=${userCode}`
 
       fetch(uri, {method: 'POST', headers })
         .then(data => data.json())
@@ -70,13 +72,11 @@ const MFA = () => {
         })
         .catch(console.error)
   })}
-  
+  console.log('MFA STATUS', enabled)
   return (
     <>
       <div>Multi-factor Authentication</div>
-      {enabled ? (
-        <div>MFA is enabled already</div>
-      ) : image ? (
+      {enabled ? navigate('/') : image ? (
         <div>
           <h3>Scan this QR Code: </h3>
           <img src={image} alt="QR code" />
