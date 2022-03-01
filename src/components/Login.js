@@ -26,7 +26,18 @@ const Login = ({setStatus, setUser, setUserAttributes, setNewPasswordRequired}) 
             setUserAttributes(data)
             navigate('/change-password-required')
             break
-          case 'mfaRequired':
+          case 'totpRequired':
+            const token = prompt(
+              'Please enter the 6-digit code from your authenticator app'
+            )
+            user.sendMFACode(
+              token,
+              {
+                onSuccess: () => navigate('/'),
+                onFailure: () => alert('Incorrect code')
+              },
+              'SOFTWARE_TOKEN_MFA'
+            )
             break
         }
       })

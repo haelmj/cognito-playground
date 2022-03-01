@@ -111,18 +111,8 @@ function Account (props) {
           console.log('newPasswordRequired', data)
           resolve({ message: 'newPasswordRequired', user, data })
         },
-        mfaRequired: () => {
-          const token = prompt(
-            'Please enter the 6-digit code from your authenticator app'
-          )
-          user.sendMFACode(
-            token,
-            {
-              onSuccess: () => (window.location.href = window.location.href),
-              onFailure: () => alert('Incorrect code')
-            },
-            'SOFTWARE_TOKEN_MFA'
-          )
+        totpRequired: () => {
+          resolve({ message: 'totpRequired', user })
         }
       })
     })
