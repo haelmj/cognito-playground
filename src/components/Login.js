@@ -1,8 +1,21 @@
+import { Link, useNavigate } from 'react-router-dom'
 import React, { useState, useContext } from 'react'
-import {Link, useNavigate} from 'react-router-dom'
 import { AccountContext } from './Accounts'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Container from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
+import CssBaseline from '@mui/material/CssBaseline'
 
-const Login = ({setStatus, setUser, setUserAttributes, setNewPasswordRequired}) => {
+
+const Login = ({
+  setStatus,
+  setUser,
+  setUserAttributes,
+  setNewPasswordRequired
+}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -13,9 +26,9 @@ const Login = ({setStatus, setUser, setUserAttributes, setNewPasswordRequired}) 
     e.preventDefault()
 
     authenticate(email, password)
-      .then(({message, user, data}) => {
-        console.log('Logged in: ', {message, user, data})
-        switch(message) {
+      .then(({ message, user, data }) => {
+        console.log('Logged in: ', { message, user, data })
+        switch (message) {
           case 'SUCCESS':
             setStatus(true)
             navigate('/enable-mfa')
@@ -47,15 +60,53 @@ const Login = ({setStatus, setUser, setUserAttributes, setNewPasswordRequired}) 
   }
 
   return (
-    <div>
-      <h3>Please login below</h3>
-      <form onSubmit={onSubmit}>
-        <input value={email} onChange={e => setEmail(e.target.value)} placeholder='Email' required/>
-        <input value={password} onChange={e => setPassword(e.target.value)} type='password' placeholder='Password' required/>
-        <button type='submit'>Login</button><br/>
-      </form>
-      <Link to='/forgot-password'>Forgot Password?</Link>
-    </div>
+    <Container component='main' maxWidth='xs'>
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
+        <Typography componen='h1' variant='h5'>
+          Please login below
+        </Typography>
+        <Box component='form' onSubmit={onSubmit} sx={{ mt: 1 }}>
+          <TextField
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder='Email'
+            margin='normal'
+            required
+            fullWidth
+          />
+          <TextField
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            type='password'
+            placeholder='Password'
+            margin='normal'
+            required
+            fullWidth
+          />
+          <Button
+            variant='contained'
+            type='submit'
+            fullWidth
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Login
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              <Link to='/forgot-password'>Forgot Password?</Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+    </Container>
   )
 }
-export default Login;
+export default Login
