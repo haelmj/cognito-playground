@@ -70,7 +70,7 @@ const Login = ({
           alignItems: 'center'
         }}
       >
-        <Typography componen='h1' variant='h5'>
+        <Typography component='h1' variant='h5'>
           Please login below
         </Typography>
         <Box component='form' onSubmit={onSubmit} sx={{ mt: 1 }}>
