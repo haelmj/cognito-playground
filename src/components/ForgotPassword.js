@@ -79,7 +79,7 @@ export default function ForgotPassword (props) {
             variant='contained'
             type='submit'
             fullWidth
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2,backgroundColor: '#f3f3f3', color: 'black', '&:hover': { backgroundColor: 'Grey' } }}
           >
             Send Verification Code
           </Button>
@@ -121,7 +121,7 @@ export default function ForgotPassword (props) {
             variant='contained'
             type='submit'
             fullWidth
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 3, mb: 2,backgroundColor: '#f3f3f3', color: 'black', '&:hover': { backgroundColor: 'Grey' } }}
           >
             Reset Password
           </Button>
