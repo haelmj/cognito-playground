@@ -2,13 +2,15 @@
   "name": "cognito-playground",
   "version": "0.1.0",
   "private": true,
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.3",
+    "@testing-library/user-event": "^13.5.0"
+  },
   "dependencies": {
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@mui/material": "^5.4.4",
-    "@testing-library/jest-dom": "^5.16.2",
-    "@testing-library/react": "^12.1.3",
-    "@testing-library/user-event": "^13.5.0",
     "amazon-cognito-identity-js": "^5.2.6",
     "aws-sdk": "^2.1074.0",
     "axios": "^0.26.0",
